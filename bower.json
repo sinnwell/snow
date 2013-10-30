@@ -1,0 +1,13 @@
+{
+  "name": "snow",
+  "description": "snow effect using canvas",
+  "version": "0.0.1",
+  "main": "snow.js",
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "components",
+    "test/*.js",
+    "test/*.html"
+  ]
+}
