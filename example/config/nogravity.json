@@ -1,0 +1,8 @@
+{
+	"amount": 100,
+	"gravity": 20,
+	"sizeMin": 20,
+	"sizeMax": 30,
+	"windMin": 1,
+	"windMax": 20
+}

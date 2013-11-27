@@ -2,12 +2,29 @@
   "name": "snow",
   "description": "snow effect using canvas",
   "version": "0.0.1",
-  "main": "snow.js",
+  "main": "Snow.js",
   "ignore": [
     "**/.*",
     "node_modules",
     "components",
     "test/*.js",
-    "test/*.html"
-  ]
+    "test/*.html",
+    "bower_components",
+    "test",
+    "tests"
+  ],
+  "homepage": "https://github.com/sinnwell/snow",
+  "authors": [
+    "Steve Sinnwell <steve@sinnwell.com>"
+  ],
+  "keywords": [
+    "snow",
+    "effect"
+  ],
+  "license": "MIT",
+  "devDependencies": {
+    "stats.js": "*",
+    "flat-ui-official": "~2.1.1",
+    "greensock": "~1.11.2"
+  }
 }

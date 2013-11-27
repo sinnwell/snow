@@ -3,72 +3,26 @@
 /**
  * Snow main class
  */
-var Snow = function() {
-  this.init();
+var Snow = function(config) {
+  this.init(config);
+  this.create();
 };
 
 Snow.prototype = {
 
   // public
   start: function() {
-    this.create();
+    this.render();
+  },
+
+  stop: function() {
+    // this.create();
   },
 
   // View constructor
-  init: function() {
-    // Storing the View context
-    var self = this;
+  init: function(config) {
 
-    //————————————————————— C U S T O M    V A L U E S
-
-    // Debug
-    this.debug = false;
-    this.stats = null;
-
-    // Snow behavior
-    this.intro = true; // If true, the snowflakes will appear from the top left hand corner, instead of directly filling the screen.
-    this.fade = true; // If true, the snowflakes will appear using opacity
-
-    // Snow Look
-    this.snowAmount = 20; // The number of snowflakes
-    this.snowSize = 1; // Scale of individual snowflakes. 1 is normal, 2 is double, 0.5 is half
-
-    // Snow distance
-    this.snowZmin = 0.3; // The min snowflake distance : 0 is close, 1 is far
-    this.snowZmax = 1; // The max snowflake distance : 0 is close, 1 is far
-
-    // Snow Opacity
-    this.snowAlphaMin = 1; // The minimum alpha value
-    this.snowAlphaMax = 1; // The maximum alpha value
-
-    // Snow Rotation
-    this.snowRotation = 0; // Rotation animation. 0.5 is half, 2 is double.
-
-    // Gravity
-    this.gravity = -8; // Speed of fall. 100 is the normal speed. 0 to float, -100 to inverse the direction.
-
-    // Wind Force
-    this.windBegin = 0; // The inital wind when the snow starts, then it smoothly changes to the normal values
-    this.windForceMin = 2; // The minimum force of the wind
-    this.windForceMax = 10; // The maximum force of the wind
-
-
-    // Wind Direction
-    this.windDirection = "both"; // You can chose between "left", "right", and "both"
-
-    // Wind duration
-    this.windTimeMin = 1; // Minimum time between two winds
-    this.windTimeMax = 20; // Maximum time between two winds
-
-    this.activeFlakes = [];
-
-    this.gravity = Math.random() * 40 - 20;
-
-    this.wind = {force: 1};
-
-    // scrolling
-
-    this.previousScroll = 0;
+    this.config(config);
 
     // AnimationFrame Polyfill
     var lastTime = 0;
@@ -94,24 +48,89 @@ Snow.prototype = {
       };
     }
 
-    $(window).scroll($.proxy(this.onScroll, this));
-    $(window).on('resize', $.proxy(this.onResize, this));
-  },
+    this._createCanvas();
 
-  events: {
-    //'click a.video': 'onVideoClicked'
+    // $(window).scroll($.proxy(this.onScroll, this));
+    // $(window).on('resize', $.proxy(this.onResize, this));
   },
 
   // public
 
+  config: function(config) {
+    // Storing the View context
+    var self = this;
+
+    //————————————————————— C U S T O M    V A L U E S
+
+    // Debug
+    this.debug = true;
+    this.stats = null;
+
+    // Snow behavior
+    this.intro = true; // If true, the snowflakes will appear from the top left hand corner, instead of directly filling the screen.
+    this.fade = true; // If true, the snowflakes will appear using opacity
+
+    // Snow Look
+    this.snowAmount = config.amount; // The number of snowflakes
+    this.snowSize = 1;// Scale of individual snowflakes. 1 is normal, 2 is double, 0.5 is half
+    this.sizeMin = config.sizeMin;
+    this.sizeMax = config.sizeMax; 
+
+    this.windMin = config.windMin;
+    this.windMax = config.windMax; 
+
+    // Snow distance
+    this.snowZmin = config.sizeMin; // The min snowflake distance : 0 is close, 1 is far
+    this.snowZmax = config.sizeMax; // The max snowflake distance : 0 is close, 1 is far
+
+    // Snow Opacity
+    this.snowAlphaMin = 1; // The minimum alpha value
+    this.snowAlphaMax = 1; // The maximum alpha value
+
+    // Snow Rotation
+    this.snowRotation = 0; // Rotation animation. 0.5 is half, 2 is double.
+
+    // Gravity
+    this.gravity = config.gravity; // Speed of fall. 100 is the normal speed. 0 to float, -100 to inverse the direction.
+
+    // Wind Force
+    this.windBegin = 10; // The inital wind when the snow starts, then it smoothly changes to the normal values
+    this.windForceMin = 2; // The minimum force of the wind
+    this.windForceMax = 10; // The maximum force of the wind
+
+
+    // Wind Direction
+    this.windDirection = "both"; // You can chose between "left", "right", and "both"
+
+    // Wind duration
+    this.windTimeMin = 1; // Minimum time between two winds
+    this.windTimeMax = 20; // Maximum time between two winds
+
+    this.activeFlakes = [];
+
+    // this.gravity = Math.random() * 40 - 20;
+
+    this.wind = {force: 1};
+
+    // scrolling
+
+    this.previousScroll = 0;
+  },
+
   create: function() {
-    this._createCanvas();
-    this._randomgravity();
+    // this._randomgravity();
     this._randomWind();
     this._createSnow();
     if(this.debug) {
       this._createStats();
     }
+  },
+
+  destroy: function() {
+    for (var i = 0; i < this.activeFlakes.length; i++) {
+      delete(this.activeFlakes[i]);
+    }
+    this.activeFlakes = [];
   },
 
   render: function() {
@@ -121,8 +140,7 @@ Snow.prototype = {
     }
 
     // clear the canvas
-    this.context.clearRect(0, 0, $(window).width(), $(window).height());
-
+    this._clear();
 
     // render the flakes
     for (var i = 0; i < this.activeFlakes.length; i++) {
@@ -132,7 +150,7 @@ Snow.prototype = {
       this.activeFlakes[i].render();
     }
 
-    window.requestAnimationFrame($.proxy(this.render, this));
+    this._loop(this.render);
 
     if(this.debug) {
       this.stats.end();
@@ -140,6 +158,14 @@ Snow.prototype = {
   },
 
   // private
+
+  _clear: function() {
+    this.context.clearRect(0, 0, $(window).width(), $(window).height());
+  },
+
+  _loop: function(handler) {
+    window.requestAnimationFrame($.proxy(handler, this));
+  },
 
   _createStats: function() {
     this.stats = new Stats();
@@ -152,9 +178,6 @@ Snow.prototype = {
     document.body.appendChild( this.stats.domElement );
   },
 
-  _resizeBackground: function() {
-    $('#background').height( $(window).height() + 2000 );
-  },
 
   // canvas
 
@@ -178,55 +201,67 @@ Snow.prototype = {
     }
     this._distributeFlakes();
     for (var i = 0; i < this.activeFlakes.length; i++) {
+      this.activeFlakes[i].gravity = this.gravity;
+      this.activeFlakes[i].wind = this.wind;
       this.activeFlakes[i].startAnimation();
     }
   },
 
   _distributeFlakes: function() {
-    var iterationsWidth = 3;
-    var iterationsHeight = 6;
-
     for (var i = 0; i < this.activeFlakes.length; i++) {
-      var x = 0;
-      for (var j = 0; j < iterationsWidth; j++) {
-        x += Math.random() * $(window).width() *1.2;
-      };
-      this.activeFlakes[i].x = x / iterationsWidth + $(window).width() * 0.5 - 50;
-      if(this.activeFlakes[i].x > $(window).width()) {
-        this.activeFlakes[i].x = $(window).width() - (this.activeFlakes[i].x - $(window).width());
-      }
-
-      var y = 0;
-      for (var j = 0; j < iterationsHeight; j++) {
-        y += Math.random() * $(window).height();
-      };
-      this.activeFlakes[i].y = y / (iterationsHeight);
+      this.activeFlakes[i].x = Math.random() * $(window).width();
+      this.activeFlakes[i].y = Math.random() * $(window).height();
     }
+
+    // var iterationsWidth = 1;
+    // var iterationsHeight = 1;
+
+    // for (var i = 0; i < this.activeFlakes.length; i++) {
+    //   var x = 0;
+    //   for (var j = 0; j < iterationsWidth; j++) {
+    //     x += Math.random() * $(window).width() *1.2;
+    //   };
+    //   this.activeFlakes[i].x = x / iterationsWidth + $(window).width() * 0.5 - 50;
+    //   if(this.activeFlakes[i].x > $(window).width()) {
+    //     this.activeFlakes[i].x = $(window).width() - (this.activeFlakes[i].x - $(window).width());
+    //   }
+
+    //   var y = 0;
+    //   for (var j = 0; j < iterationsHeight; j++) {
+    //     y += Math.random() * $(window).height();
+    //   };
+    //   this.activeFlakes[i].y = y / (iterationsHeight);
+    // }
   },
 
   _createFlake: function() {
-    var m = new Snowflake();
+    var m = new Snowflake({
+      sizeMin: this.sizeMin,
+      sizeMax: this.sizeMax
+    });
     m.context = this.context;
     this.activeFlakes.push(m);
   },
 
   _randomgravity: function() {
-    TweenLite.to($(this), Math.random() * 5 + 1, {gravity: Math.random() * 40 - 20, onComplete: $.proxy(this._randomgravity, this)});
+    TweenLite.to(this, Math.random() * 5 + 1, {
+      gravity: this.gravity + Math.random() * this.gravity - this.gravity * 0.5,
+      onComplete: $.proxy(this._randomgravity, this)
+    });
   },
 
   _randomWind: function() {
     var nWind;
-    var nWind
     var wind = new Object;
-    wind.min = 10;
-    wind.max = 40;
-    wind.dir = "both";
+    wind.min = this.windMin;
+    wind.max = this.windMax;
+    wind.dir = "left";
     // Wind duration
-    var windTimeMin = 1; // Minimum time between two winds
+    var windTimeMin = 3; // Minimum time between two winds
     var windTimeMax = 10; // Maximum time between two winds
 
     if(wind.dir == "right") {
-      nWind = Math.random()*(wind.max-wind.min)+wind.min;
+      nWind = Math.random() * (wind.max - wind.min) + wind.min;
     } else if(wind.dir == "left") {
       nWind = -Math.random()*(wind.max-wind.min)-wind.min;
     } else {

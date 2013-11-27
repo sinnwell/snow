@@ -7,16 +7,34 @@
         <meta charset="utf-8">
         <title>snow by steve sinnwell</title>
         <meta name="viewport" content="width=device-width, initial-scale=1">
+        <link href="flat-ui-official/bootstrap/css/bootstrap.css" rel="stylesheet">
     </head>
-    <body style="background: #000;">
+    <body style="background: #07081C url(img/background.jpg) no-repeat top right; margin: 0; padding: 0;">
+
+        <div class="controls" style="position: fixed; top: 0;">
+            <label>Load preset</label>
+            <select id="preset">
+                <option value="normal">Normal(150 particles)</option>
+                <option value="nogravity">No gravity(100 particles)</option>
+                <option value="storm">Storm(100 particles)</option>
+            </select>
+
+            <div id="slider" class="ui-slider ui-slider-horizontal ui-widget ui-widget-content ui-corner-all" aria-disabled="false"><div class="ui-slider-segment" style="margin-left: 25%;"></div><div class="ui-slider-segment" style="margin-left: 25%;"></div><div class="ui-slider-segment" style="margin-left: 25%;"></div>
+                        <div class="ui-slider-segment"></div>
+                        <div class="ui-slider-segment"></div>
+                        <div class="ui-slider-segment"></div>
+                      <div class="ui-slider-range ui-widget-header ui-corner-all ui-slider-range-min" style="width: 50%;"></div><a class="ui-slider-handle ui-state-default ui-corner-all ui-state-active" href="#" style="left: 50%;"></a></div>
+        </div>
 
         <div id="container"></div>
 
         <script src="//ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js"></script>
-        <script>window.jQuery || document.write('<script src="js/vendor/jquery-1.10.2.min.js"><\/script>')</script>
-        <script src="http://cdnjs.cloudflare.com/ajax/libs/gsap/1.11.0/TweenMax.min.js"></script>
-        <script src="../src/Particle.js"></script>
-        <script src="../src/Snow.js"></script>
+        <script>window.jQuery || document.write('<script src="js/lib/jquery.min.js"><\/script>')</script>
+        <script src="http://cdnjs.cloudflare.com/ajax/libs/gsap/1.11.2/TweenMax.min.js"></script>
+        <script>window.TweenMax || document.write('<script src="js/lib/TweenMax.min.js"><\/script>')</script>
+        <script src="stats.js/build/stats.min.js"></script>
+        <script src="Particle.js"></script>
+        <script src="Snow.js"></script>
         <script src="js/main.js"></script>
     </body>
 </html>

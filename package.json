@@ -1,7 +1,7 @@
 {
   "name": "snow",
   "version": "0.0.1",
-  "description": "Get a callback when an element enters the viewport (body) or a custom viewport",
+  "description": "snowstorm",
   "main": "dist/snow.min.js",
   "scripts": {
     "test": "mocha-phantomjs test/test.html"
@@ -15,10 +15,15 @@
   "devDependencies": {
     "grunt": "~0.4.1",
     "grunt-contrib-concat": "~0.3.0",
-    "grunt-closure-compiler": "git://github.com/vvo/grunt-closure-compiler.git#v0.1.0",
     "grunt-contrib-watch": "~0.4.3",
-    "grunt-contrib-jshint": "~0.4.3",
-    "mocha": "~1.12.0"
+    "mocha": "~1.12.0",
+    "grunt-open": "~0.2.0",
+    "grunt-contrib-connect": "~0.3.0",
+    "grunt-contrib-jshint": "~0.5.4",
+    "connect-livereload": "~0.2.0",
+    "matchdep": "~0.1.2",
+    "grunt-closure-compiler": "0.0.21",
+    "grunt-contrib-clean": "~0.5.0"
   },
   "testling": {
     "scripts": [
